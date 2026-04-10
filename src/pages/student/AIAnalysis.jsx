@@ -7,35 +7,46 @@ function AIAnalysis() {
 
   const scrollRef = useRef(null);
 
-  const startAnalysis = () => {
+  // 这里会替换为你马上要给我的真实 API Key
+  const API_KEY = "PLEASE_REPLACE_ME_GEMINI_API_KEY";
+
+  const startAnalysis = async () => {
     setIsAnalyzing(true);
     setAiResponse('');
     setDisplayedText('');
 
     const profile = JSON.parse(localStorage.getItem('studentProfile') || '{}');
     const name = profile.name || 'Студент';
-    const uni = profile.university || 'ВУЗ не указан';
-    const major = profile.specialty || profile.faculty || 'Общая специальность';
+    const uni = profile.university || 'Университет';
+    const major = profile.specialty || profile.faculty || 'Специальность';
 
-    // HIGH FIDELITY MOCK AI ENGINE (Zero-friction, 100% reliable for demos)
-    setTimeout(() => {
-        const tailoredResponse = `Привет, **${name}**! Я проанализировал твой профиль (📍 *${uni}*, 🎓 *${major}*). Вот твоя персональная стратегия для рынка Казахстана:
+    const prompt = `Ты строгий, но полезный ИИ-наставник по карьере от EduTrack. Твоя задача — дать профессиональную дорожную карту студенту из Казахстана.
+Студент: ${name}. Университет: ${uni}. Направление: ${major}.
+Выдай короткий анализ из 3 пунктов (маркированный список, используй жирный шрифт для главного):
+1. Оценка рыночного спроса на эту специальность в Казахстане.
+2. Два самых важных навыка, которые ему нужно выучить за этот год.
+3. Какую стажировку ему искать в Казахстане прямо сейчас.
+Пиши без вводных слов. Сразу к делу. Максимум 120 слов.`;
 
-**🔥 1. Оценка востребованности:**
-Твоя специальность сейчас находится на пике спроса среди топ-компаний (Kaspi, Halyk, Kcell). Конкуренция высокая, но нехватка квалифицированных кадров с реальными кейсами играет тебе на руку.
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
 
-**🛠 2. Ключевые навыки для прокачки (Top-Priority):**
-*   **Soft Skills:** Критическое мышление и проактивная коммуникация (ценится выше, чем базовый хард-скилл).
-*   **Hard Skills:** Быстрое освоение современных фреймворков и умение работать с Data-driven инструментами.
+        if (!response.ok) throw new Error('API Error');
 
-**🎯 3. План стажировок:**
-Советую игнорировать стартапы без четкой структуры. Твоя цель — оплачиваемая летняя стажировка в финтехе или крупных ритейловых экосистемах с программой наставничества. Упор на 'Системный анализ' или 'Продукт-менеджмент'.
-
-Я готов помочь составить резюме, когда ты будешь готов!`;
-
-        setAiResponse(tailoredResponse);
+        const data = await response.json();
+        const text = data.candidates[0].content.parts[0].text;
+        
+        setAiResponse(text);
         setIsAnalyzing(false);
-    }, 2000); // 2 seconds of fake "Neural Processing" spin
+
+    } catch (err) {
+        setIsAnalyzing(false);
+        setAiResponse('**Сбой связи:** Нейросеть недоступна. Пожалуйста, проверьте API ключ или подключение.');
+    }
   };
 
   // Sci-fi Typewriter effect
@@ -47,7 +58,7 @@ function AIAnalysis() {
        i++;
        if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
        if (i >= aiResponse.length) clearInterval(interval);
-    }, 15); // Fast sci-fi typing speed
+    }, 15); // Fast typing speed
     return () => clearInterval(interval);
   }, [aiResponse]);
 
@@ -58,10 +69,10 @@ function AIAnalysis() {
              <h2 style={{fontSize: '2rem', color: 'var(--text-hero)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px'}}>
                <i className="fa-solid fa-brain" style={{color: '#8b5cf6'}}></i> EduTrack AI Assistant
              </h2>
-             <p style={{color: 'var(--text-muted)'}}>Нейросетевое ядро EduTrack анализирует вашу траекторию для рынка Казахстана.</p>
+             <p style={{color: 'var(--text-muted)'}}>Нейросетевое ядро прямиком подключено к облачным API кластерам.</p>
            </div>
            <div style={{background: 'rgba(139, 92, 246, 0.1)', color: '#8b5cf6', padding: '6px 12px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 700}}>
-               <i className="fa-solid fa-check-circle" style={{marginRight: '6px'}}></i> Узел активен
+               <i className="fa-solid fa-check-circle" style={{marginRight: '6px'}}></i> Real API Node
            </div>
         </div>
 
@@ -89,9 +100,9 @@ function AIAnalysis() {
                   style={{width: '100%', padding: '16px', background: isAnalyzing ? '#cbd5e1' : '#0f172a', color: 'white', border: 'none', borderRadius: '16px', fontWeight: 700, cursor: isAnalyzing ? 'not-allowed' : 'pointer', transition: '0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px'}}
                 >
                   {isAnalyzing ? (
-                      <><i className="fa-solid fa-circle-notch fa-spin"></i> Синтез графа...</>
+                      <><i className="fa-solid fa-circle-notch fa-spin"></i> Обработка запроса...</>
                   ) : (
-                      <><i className="fa-solid fa-bolt"></i> Запуск Аналитики</>
+                      <><i className="fa-solid fa-bolt"></i> Запуск Истинного ИИ</>
                   )}
                 </button>
             </div>
@@ -99,17 +110,16 @@ function AIAnalysis() {
             {/* Right Box: Sci-fi Terminal Area */}
             <div ref={scrollRef} style={{background: '#ffffff', padding: '32px', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 10px 40px -10px rgba(0,0,0,0.06)', minHeight: '400px', maxHeight: '500px', overflowY: 'auto'}}>
                 {!aiResponse && !isAnalyzing && (
-                    <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', opacity: 0.6}}>
+                     <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', opacity: 0.6}}>
                         <i className="fa-solid fa-radar" style={{fontSize: '4rem', marginBottom: '16px'}}></i>
-                        <h3 style={{fontWeight: 600}}>Ядро ИИ простаивает</h3>
-                        <p style={{fontSize: '0.9rem', margin: 0}}>Нажмите на запуск аналитики для старта</p>
+                        <h3 style={{fontWeight: 600}}>Ядро ИИ ожидает команды</h3>
                     </div>
                 )}
                 
                 {isAnalyzing && !aiResponse && (
                     <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#8b5cf6'}}>
                         <i className="fa-solid fa-microchip fa-beat-fade" style={{fontSize: '4rem', marginBottom: '16px'}}></i>
-                        <h3>Обработка нейронных весов...</h3>
+                        <h3>Стучимся в Google Gemini API...</h3>
                     </div>
                 )}
 
