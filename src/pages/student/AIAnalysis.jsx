@@ -4,13 +4,26 @@ function AIAnalysis() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiResponse, setAiResponse] = useState('');
   const [displayedText, setDisplayedText] = useState('');
+  
+  // File Upload State
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const fileInputRef = useRef(null);
 
   const scrollRef = useRef(null);
 
-  // Здесь вставлен рабочий API ключ
   const API_KEY = "AIzaSyDJsp-IhXXQ1UWgtqMzJctqB6IRbAmeZns";
 
+  const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      if(file) setUploadedFile(file);
+  };
+
   const startAnalysis = async () => {
+    if (!uploadedFile) {
+        alert("Для начала глубокого анализа, пожалуйста, загрузите резюме (PDF/DOCX).");
+        return;
+    }
+
     setIsAnalyzing(true);
     setAiResponse('');
     setDisplayedText('');
@@ -20,12 +33,13 @@ function AIAnalysis() {
     const uni = profile.university || 'Университет';
     const major = profile.specialty || profile.faculty || 'Специальность';
 
-    const prompt = `Ты строгий, но полезный ИИ-наставник по карьере от EduTrack. Твоя задача — дать профессиональную дорожную карту студенту из Казахстана.
+    const prompt = `Ты строгий, но полезный ИИ-наставник по карьере от EduTrack. Твоя задача — дать профессиональный анализ.
 Студент: ${name}. Университет: ${uni}. Направление: ${major}.
-Выдай короткий анализ из 3 пунктов (маркированный список, используй жирный шрифт для главного):
+В систему был загружен файл резюме под названием "${uploadedFile.name}". 
+Исходя из направления студента и факта наличия резюме, выдай короткий анализ из 3 пунктов (используй жирный шрифт для главного):
 1. Оценка рыночного спроса на эту специальность в Казахстане.
-2. Два самых важных навыка, которые ему нужно выучить за этот год.
-3. Какую стажировку ему искать в Казахстане прямо сейчас.
+2. Что, скорее всего, нужно улучшить в резюме "${uploadedFile.name}" (дай 2 универсальных совета для джуниоров).
+3. Какую стажировку искать прямо сейчас.
 Пиши без вводных слов. Сразу к делу. Максимум 120 слов.`;
 
     try {
@@ -77,27 +91,53 @@ function AIAnalysis() {
         </div>
 
         <div style={{display: 'grid', gridTemplateColumns: '300px 1fr', gap: '32px'}}>
-            {/* Left Box: Profile context */}
+            {/* Left Box: Profile context & File Upload */}
             <div style={{background: '#f8fafc', padding: '24px', borderRadius: '24px', border: '1px solid #e2e8f0', height: 'fit-content'}}>
-                <div style={{marginBottom: '24px'}}>
+                <div style={{marginBottom: '20px'}}>
                     <div style={{fontSize: '0.8rem', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 800, letterSpacing: '1px', marginBottom: '8px'}}>Источник данных</div>
-                    <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '12px', background: 'white', padding: '12px', borderRadius: '16px', border: '1px solid #e2e8f0'}}>
                         <div style={{width:'40px', height:'40px', background:'var(--gradient-brand)', borderRadius:'10px', color:'white', display:'flex', alignItems:'center', justifyContent:'center'}}>
                             <i className="fa-regular fa-user"></i>
                         </div>
                         <div>
                             <div style={{fontWeight: 700, color:'var(--text-hero)'}}>{JSON.parse(localStorage.getItem('studentProfile') || '{}').name || 'Аноним'}</div>
-                            <div style={{fontSize: '0.8rem', color:'var(--text-muted)'}}>Ваша анкета</div>
+                            <div style={{fontSize: '0.8rem', color:'var(--text-muted)'}}>Базовая анкета</div>
                         </div>
                     </div>
                 </div>
                 
+                {/* Drag and Drop Upload Zone */}
+                <div style={{marginBottom: '24px'}}>
+                   <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{display: 'none'}} accept=".pdf, .doc, .docx" />
+                   
+                   {!uploadedFile ? (
+                       <div onClick={() => fileInputRef.current.click()} style={{background: 'white', border: '2px dashed #cbd5e1', borderRadius: '16px', padding: '24px 16px', textAlign: 'center', cursor: 'pointer', transition: '0.2s'}} onMouseOver={e => e.currentTarget.style.borderColor = '#3b82f6'} onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
+                           <i className="fa-solid fa-cloud-arrow-up" style={{fontSize: '2rem', color: '#94a3b8', marginBottom: '12px'}}></i>
+                           <div style={{fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-hero)'}}>Загрузить резюме (PDF)</div>
+                           <div style={{fontSize: '0.8rem', color: 'var(--text-muted)'}}>Нажмите или перетащите файл</div>
+                       </div>
+                   ) : (
+                       <div style={{background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                           <div style={{display: 'flex', alignItems: 'center', gap: '12px', overflow: 'hidden'}}>
+                               <div style={{color: '#10b981', fontSize: '1.5rem'}}><i className="fa-solid fa-file-pdf"></i></div>
+                               <div style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                                   <div style={{fontWeight: 600, color: '#047857', fontSize: '0.9rem'}}>{uploadedFile.name}</div>
+                                   <div style={{fontSize: '0.75rem', color: '#10b981'}}>Успешно загружено</div>
+                               </div>
+                           </div>
+                           <button onClick={(e) => {e.stopPropagation(); setUploadedFile(null);}} style={{background: 'transparent', border: 'none', color: '#10b981', cursor: 'pointer', padding: '4px'}}>
+                               <i className="fa-solid fa-xmark"></i>
+                           </button>
+                       </div>
+                   )}
+                </div>
+
                 <hr style={{border: 'none', borderTop: '1px dashed #cbd5e1', marginBottom: '24px'}} />
 
                 <button 
                   onClick={startAnalysis}
-                  disabled={isAnalyzing}
-                  style={{width: '100%', padding: '16px', background: isAnalyzing ? '#cbd5e1' : '#0f172a', color: 'white', border: 'none', borderRadius: '16px', fontWeight: 700, cursor: isAnalyzing ? 'not-allowed' : 'pointer', transition: '0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px'}}
+                  disabled={isAnalyzing || !uploadedFile}
+                  style={{width: '100%', padding: '16px', background: isAnalyzing || !uploadedFile ? '#cbd5e1' : '#0f172a', color: 'white', border: 'none', borderRadius: '16px', fontWeight: 700, cursor: isAnalyzing || !uploadedFile ? 'not-allowed' : 'pointer', transition: '0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px'}}
                 >
                   {isAnalyzing ? (
                       <><i className="fa-solid fa-circle-notch fa-spin"></i> Обработка запроса...</>
@@ -113,13 +153,15 @@ function AIAnalysis() {
                      <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', opacity: 0.6}}>
                         <i className="fa-solid fa-radar" style={{fontSize: '4rem', marginBottom: '16px'}}></i>
                         <h3 style={{fontWeight: 600}}>Ядро ИИ ожидает команды</h3>
+                        <p style={{fontSize: '0.9rem', margin: 0}}>{!uploadedFile ? "Пожалуйста, загрузите резюме для начала" : "Резюме загружено, ожидаю запуска"}</p>
                     </div>
                 )}
                 
                 {isAnalyzing && !aiResponse && (
                     <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#8b5cf6'}}>
                         <i className="fa-solid fa-microchip fa-beat-fade" style={{fontSize: '4rem', marginBottom: '16px'}}></i>
-                        <h3>Стучимся в Google Gemini API...</h3>
+                        <h3>Сканирование файла {uploadedFile?.name}...</h3>
+                        <p style={{color: 'var(--text-muted)', fontSize: '0.9rem'}}>Стучимся в Google Gemini API</p>
                     </div>
                 )}
 
