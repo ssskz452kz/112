@@ -8,6 +8,27 @@ function ExploreJobs() {
   const [university, setUniversity] = useState('');
   const [faculty, setFaculty] = useState('');
   const [specialty, setSpecialty] = useState('');
+  const [applied, setApplied] = useState({});
+
+  const handleApply = (job) => {
+    setApplied({...applied, [job.id]: true});
+    const existingApps = JSON.parse(localStorage.getItem('studentApplications') || '[]');
+    localStorage.setItem('studentApplications', JSON.stringify([{...job, appliedAt: Date.now()}, ...existingApps]));
+
+    const profile = JSON.parse(localStorage.getItem('studentProfile') || '{}');
+    const newCandidate = {
+       id: `cand_${Date.now()}`, 
+       name: profile.name || 'Анонимный студент', 
+       uni: profile.university || 'ВУЗ не указан', 
+       major: profile.specialty || profile.faculty || 'IT Специальность', 
+       match: job.match || Math.floor(Math.random()*(99-80)+80), 
+       role: job.role, 
+       avatarGrad: 'linear-gradient(135deg, #10b981, #0ea5e9)'
+    };
+    const existingCands = JSON.parse(localStorage.getItem('hrCandidatesFromStudent') || '[]');
+    localStorage.setItem('hrCandidatesFromStudent', JSON.stringify([newCandidate, ...existingCands]));
+    alert(`🎉 Резюме успешно отправлено в "${job.company}"!`);
+  };
 
   // Combined flatten jobs array + HR User Custom Posts injected magically!
   const getCombinedJobs = () => {
