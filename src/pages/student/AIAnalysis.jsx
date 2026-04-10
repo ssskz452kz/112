@@ -7,8 +7,8 @@ function AIAnalysis() {
 
   const scrollRef = useRef(null);
 
-  // 这里会替换为你马上要给我的真实 API Key
-  const API_KEY = "PLEASE_REPLACE_ME_GEMINI_API_KEY";
+  // Здесь вставлен рабочий API ключ
+  const API_KEY = "AIzaSyDJsp-IhXXQ1UWgtqMzJctqB6IRbAmeZns";
 
   const startAnalysis = async () => {
     setIsAnalyzing(true);
