@@ -108,18 +108,20 @@ function AIAnalysis() {
                 
                 {/* Drag and Drop Upload Zone */}
                 <div style={{marginBottom: '24px'}}>
-                   <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{display: 'none'}} accept=".pdf, .doc, .docx" />
+                   <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{display: 'none'}} />
                    
                    {!uploadedFile ? (
                        <div onClick={() => fileInputRef.current.click()} style={{background: 'white', border: '2px dashed #cbd5e1', borderRadius: '16px', padding: '24px 16px', textAlign: 'center', cursor: 'pointer', transition: '0.2s'}} onMouseOver={e => e.currentTarget.style.borderColor = '#3b82f6'} onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}>
                            <i className="fa-solid fa-cloud-arrow-up" style={{fontSize: '2rem', color: '#94a3b8', marginBottom: '12px'}}></i>
-                           <div style={{fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-hero)'}}>Загрузить резюме (PDF)</div>
-                           <div style={{fontSize: '0.8rem', color: 'var(--text-muted)'}}>Нажмите или перетащите файл</div>
+                           <div style={{fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-hero)'}}>Загрузить резюме</div>
+                           <div style={{fontSize: '0.8rem', color: 'var(--text-muted)'}}>PDF, DOC, DOCX или любой файл</div>
                        </div>
                    ) : (
                        <div style={{background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                            <div style={{display: 'flex', alignItems: 'center', gap: '12px', overflow: 'hidden'}}>
-                               <div style={{color: '#10b981', fontSize: '1.5rem'}}><i className="fa-solid fa-file-pdf"></i></div>
+                               <div style={{color: '#10b981', fontSize: '1.5rem'}}>
+                                  <i className={`fa-solid ${uploadedFile.name.endsWith('.pdf') ? 'fa-file-pdf' : uploadedFile.name.match(/\.(doc|docx)$/) ? 'fa-file-word' : 'fa-file-lines'}`}></i>
+                               </div>
                                <div style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
                                    <div style={{fontWeight: 600, color: '#047857', fontSize: '0.9rem'}}>{uploadedFile.name}</div>
                                    <div style={{fontSize: '0.75rem', color: '#10b981'}}>Успешно загружено</div>
