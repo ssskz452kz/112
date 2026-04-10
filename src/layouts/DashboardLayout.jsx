@@ -35,15 +35,15 @@ function DashboardLayout() {
         </nav>
 
         <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
-          <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+          <NavLink to="/student/profile" style={{display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', padding: '8px', borderRadius: '12px', transition: '0.2s', cursor: 'pointer'}} className="sidebar-link">
              <div style={{width: '40px', height: '40px', borderRadius: '50%', background: 'var(--gradient-brand)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'}}>
-               A
+               {JSON.parse(localStorage.getItem('studentProfile') || '{}').name ? JSON.parse(localStorage.getItem('studentProfile') || '{}').name.charAt(0).toUpperCase() : 'A'}
              </div>
              <div>
-               <p style={{margin: 0, fontWeight: 700, color: 'var(--text-hero)', fontSize: '0.95rem'}}>Алдияр С.</p>
-               <p style={{margin: 0, color: 'var(--text-muted)', fontSize: '0.8rem'}}>Студент 3 курса</p>
+               <p style={{margin: 0, fontWeight: 700, color: 'var(--text-hero)', fontSize: '0.95rem'}}>{JSON.parse(localStorage.getItem('studentProfile') || '{}').name || 'Аноним С.'}</p>
+               <p style={{margin: 0, color: 'var(--text-muted)', fontSize: '0.8rem'}}><i className="fa-solid fa-pen-to-square" style={{marginRight:'4px'}}></i> Заполнить профиль</p>
              </div>
-          </div>
+          </NavLink>
         </div>
       </aside>
 

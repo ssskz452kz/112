@@ -10,6 +10,8 @@ function ProfileForm() {
   const [faculty, setFaculty] = useState('');
   const [specialty, setSpecialty] = useState('');
   const [salary, setSalary] = useState('250 000 ₸');
+  const [name, setName] = useState('');
+  const [course, setCourse] = useState('3');
 
   useEffect(() => {
     const savedProfile = localStorage.getItem('studentProfile');
@@ -20,6 +22,8 @@ function ProfileForm() {
         if(parsed.university) setUniversity(parsed.university);
         if(parsed.faculty) setFaculty(parsed.faculty);
         if(parsed.specialty) setSpecialty(parsed.specialty);
+        if(parsed.name) setName(parsed.name);
+        if(parsed.course) setCourse(parsed.course);
       } catch (e) {}
     }
   }, []);
@@ -106,6 +110,23 @@ function ProfileForm() {
       </div>
 
       <form onSubmit={handleSave}>
+        <h4 style={{fontSize: '1.2rem', color: 'var(--text-main)', marginBottom: '24px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px'}}>
+          <i className="fa-solid fa-user" style={{color: 'var(--primary)', marginRight: '10px'}}></i>Личные данные
+        </h4>
+        
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '40px'}}>
+            <div className="input-group" style={{margin: 0}}>
+                <label style={{display:'block', marginBottom:'8px', fontSize:'0.9rem', fontWeight:600}}>Ваше имя и фамилия</label>
+                <input type="text" value={name} onChange={e=>setName(e.target.value)} placeholder="Например: 叶尔兰" style={baseSelectStyle} required />
+            </div>
+            <div className="input-group" style={{margin: 0}}>
+                <label style={{display:'block', marginBottom:'8px', fontSize:'0.9rem', fontWeight:600}}>Курс обучения</label>
+                <select style={baseSelectStyle} value={course} onChange={e=>setCourse(e.target.value)}>
+                    <option value="1">1 курс</option><option value="2">2 курс</option><option value="3">3 курс</option><option value="4">4 курс</option><option value="Выпускник">Выпускник</option>
+                </select>
+            </div>
+        </div>
+
         <h4 style={{fontSize: '1.2rem', color: 'var(--text-main)', marginBottom: '24px', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px'}}>
           <i className="fa-solid fa-building-columns" style={{color: 'var(--primary)', marginRight: '10px'}}></i>Академический бэкграунд
         </h4>
