@@ -6,6 +6,7 @@ import JobBoard from './pages/student/JobBoard';
 import ProfileForm from './pages/student/ProfileForm';
 import ExploreJobs from './pages/student/ExploreJobs';
 import StudentApplications from './pages/student/StudentApplications';
+import AIAnalysis from './pages/student/AIAnalysis';
 import HRLayout from './layouts/HRLayout';
 import HRDashboard from './pages/hr/HRDashboard';
 import HRCandidates from './pages/hr/HRCandidates';
@@ -25,6 +26,7 @@ function App() {
           <Route path="profile" element={<ProfileForm />} />
           <Route path="explore" element={<ExploreJobs />} />
           <Route path="applications" element={<StudentApplications />} />
+          <Route path="ai" element={<AIAnalysis />} />
         </Route>
 
         {/* Protected Dashboard Routes (HR/Employer) */}

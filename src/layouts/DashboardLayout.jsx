@@ -28,10 +28,10 @@ function DashboardLayout() {
              <span>Мои отклики</span>
           </NavLink>
           
-          <button onClick={() => alert('Блок анализа навыков и тестирования ИИ откроется на следующей фазе! Ваш профиль уже анализируется в фоне.')} style={{ background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', fontSize: '1rem', width: '100%', padding: '0'}} className="sidebar-link">
+          <NavLink to="/student/ai" className={({ isActive }) => isActive ? "sidebar-link active" : "sidebar-link"}>
              <i className="fa-solid fa-wand-magic-sparkles"></i>
              <span>Анализ навыков (AI)</span>
-          </button>
+          </NavLink>
         </nav>
 
         <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
